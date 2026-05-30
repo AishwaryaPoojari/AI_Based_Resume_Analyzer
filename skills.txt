@@ -1,0 +1,13 @@
+python
+java
+c
+c++
+html
+css
+javascript
+sql
+machine learning
+data science
+communication
+teamwork
+problem solving

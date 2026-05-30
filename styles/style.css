@@ -1,0 +1,27 @@
+body {
+    background-color: #f5f7fa;
+}
+
+.main {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+h1 {
+    color: #1f77b4;
+    text-align: center;
+}
+
+.stButton button {
+    background-color: #1f77b4;
+    color: white;
+    border-radius: 10px;
+    height: 45px;
+    width: 100%;
+    font-size: 18px;
+}
+
+.stProgress > div > div > div > div {
+    background-color: green;
+}

@@ -1,0 +1,24 @@
+{
+  "name": "ai_resume_analyzer",
+  "version": "1.0.0",
+  "description": "The AI-Based Resume Analyzer is a Machine Learning and Natural Language Processing (NLP) based web application that helps job seekers analyze and improve their resumes. The system automatically extracts text from PDF resumes, identifies technical and soft skills, predicts suitable job roles, evaluates ATS (Applicant Tracking System) compatibility, and provides feedback for resume enhancement.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AishwaryaPoojari/AI_Based_Resume_Analyzer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/AishwaryaPoojari/AI_Based_Resume_Analyzer/issues"
+  },
+  "homepage": "https://github.com/AishwaryaPoojari/AI_Based_Resume_Analyzer#readme",
+  "dependencies": {
+    "docx": "^9.7.1"
+  }
+}

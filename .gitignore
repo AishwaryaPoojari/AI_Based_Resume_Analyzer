@@ -4,3 +4,5 @@ __pycache__/
 model.pkl
 tfidf.pkl
 config.py
+.env
+*.db

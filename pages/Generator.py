@@ -213,7 +213,7 @@ def generate_resume_docx(data):
 c1, c2, c3 = st.columns([7, 2, 2])
 with c1:
     st.markdown("## 🛠️ Resume Generator")
-    st.markdown("<p style='color:#8b949e'>Fill in your details and download a professional resume instantly.</p>",
+    st.markdown("<p style='color:#6B7280'>Fill in your details and download a professional resume instantly.</p>",
                 unsafe_allow_html=True)
 with c2:
     st.markdown("<br>", unsafe_allow_html=True)
@@ -225,13 +225,13 @@ with c3:
         st.session_state.clear()
         st.switch_page("pages/Landing.py")
 
-st.markdown("<hr style='border-color:#30363d'>", unsafe_allow_html=True)
+st.markdown("<hr style='border-color:rgba(139,92,246,0.14)'>", unsafe_allow_html=True)
 
 st.markdown("""
-<div style="background:#1c2438;border:1px solid #1f6feb;border-radius:10px;
+<div style="background:#EDE9FF;border:1px solid rgba(139,92,246,0.3);border-radius:10px;
             padding:0.8rem 1.2rem;margin-bottom:1.5rem;">
-    <b style="color:#58a6ff;">&#128161; How it works:</b>
-    <span style="color:#8b949e;font-size:0.87rem;">
+    <b style="color:#7C3AED;">&#128161; How it works:</b>
+    <span style="color:#6B7280;font-size:0.87rem;">
         Your basic info is pre-filled from your account.
         Add your skills, projects and education — then click Generate!
     </span>
@@ -252,10 +252,10 @@ with t4:
 
 chosen_color = st.session_state.get("resume_color", "2E75B6")
 color_names  = {"2E75B6": "Blue", "00695c": "Green", "1a1a2e": "Dark", "7b0000": "Maroon"}
-st.markdown(f"<p style='color:#8b949e;font-size:0.82rem;'>Selected: <b style='color:#e6edf3;'>{color_names.get(chosen_color,'Blue')}</b></p>",
+st.markdown(f"<p style='color:#6B7280;font-size:0.82rem;'>Selected: <b style='color:#1E1245;'>{color_names.get(chosen_color,'Blue')}</b></p>",
             unsafe_allow_html=True)
 
-st.markdown("<hr style='border-color:#30363d'>", unsafe_allow_html=True)
+st.markdown("<hr style='border-color:rgba(139,92,246,0.14)'>", unsafe_allow_html=True)
 
 # ── Personal Details ───────────────────────────────────────
 st.markdown("### 👤 Personal Details")
@@ -268,7 +268,7 @@ with p2:
     linkedin = st.text_input("LinkedIn URL", placeholder="linkedin.com/in/yourname")
 github = st.text_input("GitHub URL (optional)", placeholder="github.com/yourname")
 
-st.markdown("<hr style='border-color:#30363d'>", unsafe_allow_html=True)
+st.markdown("<hr style='border-color:rgba(139,92,246,0.14)'>", unsafe_allow_html=True)
 
 # ── Professional Details ───────────────────────────────────
 st.markdown("### 💼 Professional Details")
@@ -282,7 +282,7 @@ summary = st.text_area("Professional Summary *",
                         placeholder="Write 2-3 sentences about yourself and your career goal.",
                         height=100)
 
-st.markdown("<hr style='border-color:#30363d'>", unsafe_allow_html=True)
+st.markdown("<hr style='border-color:rgba(139,92,246,0.14)'>", unsafe_allow_html=True)
 
 # ── Education ──────────────────────────────────────────────
 st.markdown("### 🎓 Education")
@@ -299,7 +299,7 @@ for idx in range(2):
             grade = st.text_input("Grade / CGPA",placeholder="8.5 / 10",   key=f"gr_{idx}")
         education.append({"degree": degree, "college": college, "year": year, "grade": grade})
 
-st.markdown("<hr style='border-color:#30363d'>", unsafe_allow_html=True)
+st.markdown("<hr style='border-color:rgba(139,92,246,0.14)'>", unsafe_allow_html=True)
 
 # ── Skills ─────────────────────────────────────────────────
 st.markdown("### 🛠️ Skills")
@@ -309,11 +309,11 @@ with sk1:
 with sk2:
     softskills = st.text_input("Soft Skills", placeholder="Communication, Teamwork, Problem Solving")
 
-st.markdown("<hr style='border-color:#30363d'>", unsafe_allow_html=True)
+st.markdown("<hr style='border-color:rgba(139,92,246,0.14)'>", unsafe_allow_html=True)
 
 # ── Projects ───────────────────────────────────────────────
 st.markdown("### 🚀 Projects")
-st.markdown("<p style='color:#8b949e;font-size:0.85rem;'>Put each point on a new line in Description.</p>",
+st.markdown("<p style='color:#6B7280;font-size:0.85rem;'>Put each point on a new line in Description.</p>",
             unsafe_allow_html=True)
 projects = []
 for idx in range(3):
@@ -326,7 +326,7 @@ for idx in range(3):
         proj_tech = st.text_input("Tech Stack",   placeholder="Python, Streamlit, SQLite", key=f"ptech_{idx}")
         projects.append({"name": proj_name, "description": proj_desc, "tech": proj_tech})
 
-st.markdown("<hr style='border-color:#30363d'>", unsafe_allow_html=True)
+st.markdown("<hr style='border-color:rgba(139,92,246,0.14)'>", unsafe_allow_html=True)
 
 # ── Certifications ─────────────────────────────────────────
 st.markdown("### 🏆 Certifications & Achievements (optional)")
@@ -334,7 +334,7 @@ certifications = st.text_area("One per line",
                                placeholder="Python for Everybody — Coursera (2024)\nMachine Learning — Andrew Ng (2024)",
                                height=80)
 
-st.markdown("<hr style='border-color:#30363d'>", unsafe_allow_html=True)
+st.markdown("<hr style='border-color:rgba(139,92,246,0.14)'>", unsafe_allow_html=True)
 
 # ── Generate ───────────────────────────────────────────────
 st.markdown("### ⚡ Generate Resume")

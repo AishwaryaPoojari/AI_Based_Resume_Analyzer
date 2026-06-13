@@ -87,7 +87,7 @@ if submitted:
 st.markdown("<br>", unsafe_allow_html=True)
 col1, col2 = st.columns(2)
 with col1:
-    st.markdown("<p style='color:#8b949e;font-size:0.88rem'>Already have an account?</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#6B7280;font-size:0.88rem'>Already have an account?</p>", unsafe_allow_html=True)
 with col2:
     if st.button("🔑 Login here", use_container_width=True):
         st.switch_page("pages/Login.py")

@@ -12,17 +12,8 @@ templates = st.Page("pages/Templates.py", title="Templates", icon="📄")
 generator = st.Page("pages/Generator.py", title="Generator", icon="🛠️")
 
 pg = st.navigation(
-    pages=[landing, login, register, admin, dashboard],
-    position="hidden"
-)
-
-pg = st.navigation(
-    pages=[landing, login, register, admin, dashboard, templates],
-    position="hidden"
-)
-
-pg = st.navigation(
     pages=[landing, login, register, admin, dashboard, templates, generator],
     position="hidden"
 )
+
 pg.run()

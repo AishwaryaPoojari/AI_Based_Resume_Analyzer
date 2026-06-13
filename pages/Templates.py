@@ -20,7 +20,7 @@ if not st.session_state.get("logged_in"):
 c1, c2 = st.columns([8, 2])
 with c1:
     st.markdown("## 📄 Resume Templates")
-    st.markdown("<p style='color:#8b949e'>Download a professional ATS-friendly template and fill it with your details.</p>",
+    st.markdown("<p style='color:#6B7280'>Download a professional ATS-friendly template and fill it with your details.</p>",
                 unsafe_allow_html=True)
 with c2:
     st.markdown("<br>", unsafe_allow_html=True)
@@ -28,14 +28,14 @@ with c2:
         st.session_state.clear()
         st.switch_page("pages/Landing.py")
 
-st.markdown("<hr style='border-color:#30363d'>", unsafe_allow_html=True)
+st.markdown("<hr style='border-color:rgba(139,92,246,0.14)'>", unsafe_allow_html=True)
 
 # ── Tips banner ────────────────────────────────────────────
 st.markdown("""
-<div style="background:#1c2a1c;border:1px solid #3fb950;border-radius:10px;
+<div style="background:#F0FFF4;border:1px solid rgba(22,163,74,0.35);border-radius:10px;
             padding:0.8rem 1.2rem;margin-bottom:1.5rem;">
-    <b style="color:#3fb950;">&#128161; Tips for using these templates:</b>
-    <ul style="color:#8b949e;margin:0.4rem 0 0 1rem;font-size:0.87rem;">
+    <b style="color:#16A34A;">&#128161; Tips for using these templates:</b>
+    <ul style="color:#6B7280;margin:0.4rem 0 0 1rem;font-size:0.87rem;">
         <li>Replace all placeholder text with your actual details.</li>
         <li>Keep font and formatting consistent — do not change colors or sizes.</li>
         <li>Save as PDF before submitting to job portals for best ATS results.</li>
@@ -58,7 +58,7 @@ TEMPLATES = [
     {
         "title":    "Software Developer",
         "icon":     "💻",
-        "color":    "#1a1a2e",
+        "color":    "#1E1245",
         "desc":     "Clean and professional template for developers with work experience. Highlights tech stack, projects, and measurable achievements.",
         "best_for": "Junior / Mid-level Developers, Full Stack, Backend",
         "file":     "templates/template_developer.docx",
@@ -93,24 +93,24 @@ for i, t in enumerate(TEMPLATES):
         file_exists = os.path.exists(file_path)
 
         sections_html = "".join(
-            f'<span style="background:#21262d;color:#8b949e;padding:0.2rem 0.5rem;'
+            f'<span style="background:#EDE9FF;color:#6B7280;padding:0.2rem 0.5rem;'
             f'border-radius:20px;font-size:0.75rem;margin:0.15rem;display:inline-block;">'
             f'{s}</span>'
             for s in t["sections"]
         )
 
         st.markdown(f"""
-        <div style="background:#161b22;border:2px solid {t['color']};border-radius:14px;
+        <div style="background:#FAF8FF;border:2px solid {t['color']};border-radius:14px;
                     padding:1.2rem 1.2rem 0.8rem;margin-bottom:1.2rem;">
             <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;">
                 <span style="font-size:2rem">{t['icon']}</span>
                 <div>
-                    <div style="color:#e6edf3;font-weight:700;font-size:1.05rem;">{t['title']}</div>
+                    <div style="color:#1E1245;font-weight:700;font-size:1.05rem;">{t['title']}</div>
                     <div style="color:{t['color']};font-size:0.78rem;font-weight:600;">Best for: {t['best_for']}</div>
                 </div>
             </div>
-            <p style="color:#8b949e;font-size:0.87rem;margin:0.5rem 0 0.8rem;">{t['desc']}</p>
-            <div style="margin-bottom:0.8rem;"><b style="color:#e6edf3;font-size:0.82rem;">Sections included:</b><br>{sections_html}</div>
+            <p style="color:#6B7280;font-size:0.87rem;margin:0.5rem 0 0.8rem;">{t['desc']}</p>
+            <div style="margin-bottom:0.8rem;"><b style="color:#1E1245;font-size:0.82rem;">Sections included:</b><br>{sections_html}</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -129,9 +129,9 @@ for i, t in enumerate(TEMPLATES):
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-st.markdown("<hr style='border-color:#30363d'>", unsafe_allow_html=True)
+st.markdown("<hr style='border-color:rgba(139,92,246,0.14)'>", unsafe_allow_html=True)
 st.markdown("""
-<p style='text-align:center;color:#8b949e;font-size:0.82rem;'>
+<p style='text-align:center;color:#6B7280;font-size:0.82rem;'>
     All templates are in <b>.docx</b> format — open with Microsoft Word or Google Docs.
     After filling, export as PDF before uploading to job portals.
 </p>

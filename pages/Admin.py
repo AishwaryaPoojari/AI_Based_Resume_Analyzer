@@ -66,7 +66,7 @@ def show_dashboard():
     col_title, col_logout = st.columns([8, 2])
     with col_title:
         st.markdown("## 🛡️ Admin Dashboard")
-        st.markdown(f"<p style='color:#8b949e'>Logged in as <b>{st.session_state.admin_email}</b></p>",
+        st.markdown(f"<p style='color:#6B7280'>Logged in as <b>{st.session_state.admin_email}</b></p>",
                     unsafe_allow_html=True)
     with col_logout:
         st.markdown("<br>", unsafe_allow_html=True)
@@ -74,7 +74,7 @@ def show_dashboard():
             st.session_state.admin_logged_in = False
             st.rerun()
 
-    st.markdown("<hr style='border-color:#30363d'>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:rgba(139,92,246,0.14)'>", unsafe_allow_html=True)
 
     users = get_all_users()
 
@@ -124,7 +124,7 @@ def show_dashboard():
         <tbody>{rows}</tbody>
     </table></div>""", unsafe_allow_html=True)
 
-    st.markdown(f"<p style='color:#8b949e;font-size:0.8rem;margin-top:0.5rem'>Showing {len(users)} registered user(s)</p>",
+    st.markdown(f"<p style='color:#6B7280;font-size:0.8rem;margin-top:0.5rem'>Showing {len(users)} registered user(s)</p>",
                 unsafe_allow_html=True)
 
 

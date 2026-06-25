@@ -16,17 +16,20 @@ def show_login():
     if st.button("← Back to Home"):
         st.switch_page("pages/Landing.py")
 
-    st.markdown("""
-    <div class="auth-card">
-        <div class="auth-title">Admin Panel 🛡️</div>
-        <div class="auth-sub">Enter admin credentials to access the control panel</div>
-    </div>
-    """, unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([1, 1.5, 1])
 
-    with st.form("admin_login"):
-        email    = st.text_input("📧 Admin Email", placeholder="example@google.com")
-        password = st.text_input("🔒 Password", type="password")
-        submitted = st.form_submit_button("Access Admin Panel →", use_container_width=True)
+    with col2:
+        st.markdown("""
+        <div class="auth-card">
+            <div class="auth-title">Admin Panel 🛡️</div>
+            <div class="auth-sub">Enter admin credentials to access the control panel</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        with st.form("admin_login"):
+            email    = st.text_input("📧 Admin Email", placeholder="example@google.com")
+            password = st.text_input("🔒 Password", type="password")
+            submitted = st.form_submit_button("Access Admin Panel →", use_container_width=True)
 
     if submitted:
         admin = login_admin(email.strip().lower(), password)

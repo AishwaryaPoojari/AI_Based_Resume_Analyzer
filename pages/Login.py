@@ -60,9 +60,30 @@ with col2:
                 st.error("Invalid email or password. Please try again.")
 
 st.markdown("<br>", unsafe_allow_html=True)
-col1, col2 = st.columns(2)
-with col1:
-    st.markdown("<p style='color:#6B7280;font-size:0.88rem'>Don't have an account?</p>", unsafe_allow_html=True)
+st.markdown("""
+<style>
+[data-testid="stPageLink"] {
+    background: rgba(139,92,246,0.10) !important;
+    border: 1px solid rgba(139,92,246,0.35) !important;
+    border-radius: 8px !important;
+}
+[data-testid="stPageLink"] p {
+    color: #8B5CF6 !important;
+    font-weight: 600 !important;
+}
+[data-testid="stPageLink"]:hover {
+    background: rgba(139,92,246,0.18) !important;
+    border-color: #8B5CF6 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+col1, col2, col3 = st.columns([1, 1.5, 1])
 with col2:
-    if st.button("📝 Register here", use_container_width=True):
-        st.switch_page("pages/Register.py")
+    t1, t2 = st.columns([1.6, 1])
+    with t1:
+        st.markdown(
+            "<p style='color:#6B7280;font-size:0.88rem;padding-top:0.4rem'>Don't have an account?</p>",
+            unsafe_allow_html=True
+        )
+    with t2:
+        st.page_link("pages/Register.py", label="📝 Register here")

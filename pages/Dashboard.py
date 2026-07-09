@@ -439,6 +439,44 @@ if uploaded:
 
         st.markdown("<br>", unsafe_allow_html=True)
 
+    if r["found"]:
+        st.markdown("📈 Skill Coverage")
+
+        found_n, missing_n = len(r["found"]), len(r["missing"])
+        total = found_n + missing_n
+        found_pct = round(found_n / total * 100) if total else 0
+        missing_pct = 100 - found_pct if total else 0
+
+        st.markdown(f"""
+<div class="coverage-card">
+    <div class="coverage-row">
+        <div class="coverage-row-head">
+            <span class="coverage-row-label">
+                <span class="coverage-dot" style="background:#8B5CF6"></span>
+                Found
+            </span>
+            <span class="coverage-row-value">{found_n} skills &middot; {found_pct}%</span>
+        </div>
+        <div class="coverage-track">
+            <div class="coverage-fill" style="width:{found_pct}%;
+                 background:linear-gradient(135deg,#8B5CF6,#7C3AED);"></div>
+        </div>
+    </div>
+    <div class="coverage-row">
+        <div class="coverage-row-head">
+            <span class="coverage-row-label">
+                <span class="coverage-dot" style="background:#C4B5FD"></span>
+                Missing
+            </span>
+            <span class="coverage-row-value" style="color:#A78BFA;">{missing_n} skills &middot; {missing_pct}%</span>
+        </div>
+        <div class="coverage-track">
+            <div class="coverage-fill" style="width:{missing_pct}%; background:#C4B5FD;"></div>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
     st.markdown("💡 Suggestions")
     tips = []
     if r["words"] < 200:  tips.append("📌 Resume too short — add more project/experience details.")
@@ -447,31 +485,46 @@ if uploaded:
     if len(r["found"]) < 5: tips.append("🛠️ Add more technical skills to your resume.")
     if "education"  not in text.lower(): tips.append("🎓 Add an Education section.")
     if "project"    not in text.lower(): tips.append("🚀 Add a Projects section.")
+    if "experience" not in text.lower() and "internship" not in text.lower():
+        tips.append("💼 Add a Work Experience or Internship section.")
+    if "summary" not in text.lower() and "objective" not in text.lower():
+        tips.append("📝 Add a short Summary or Objective at the top of your resume.")
+    if r["missing"]:
+        tips.append("📚 Learn and add the missing skills listed above to widen your fit for " + r["role"] + " roles.")
     if not re.search(r"[\w.+-]+@[\w-]+\.[a-z]{2,}", text.lower()):
-        tips.append("Make sure your email is visible.")
-    if not tips: tips.append(" Great resume! Keep it updated.")
+        tips.append("📧 Make sure your email is visible.")
+    if not re.search(r"(linkedin\.com|github\.com)", text.lower()):
+        tips.append("🔗 Add a LinkedIn or GitHub link so recruiters can learn more about you.")
+    if not re.search(r"\+?\d[\d\s().-]{8,}\d", text):
+        tips.append("📱 Add a visible phone number for recruiters to reach you.")
+    if not re.search(r"\b(managed|built|led|created|developed|improved|designed|implemented|achieved)\b", text.lower()):
+        tips.append("💪 Use strong action verbs (built, led, improved, designed) to describe your work.")
+    if not re.search(r"\d", text):
+        tips.append("📊 Add measurable results or numbers (e.g. \"improved performance by 20%\") to stand out.")
+
+    # Always show at least 3 suggestions. If fewer than 3 specific issues
+    # were found, pad with general-purpose tips (skipping any that are
+    # already in the list, e.g. via the "not tips" fallback) so the section
+    # never looks sparse with just 1-2 lines.
+    general_tips = [
+        "🎉 Great resume! It covers the key sections and skills recruiters look for.",
+        "🔄 Keep it updated with your latest projects and achievements.",
+        "🎯 Consider tailoring your skills and keywords slightly for each job you apply to.",
+        "🧹 Keep formatting clean and consistent — consistent fonts, spacing, and bullet styles.",
+        "📄 Keep your resume to one page unless you have 10+ years of experience.",
+    ]
+
+    if not tips:
+        tips = general_tips[:3]
+    else:
+        for gt in general_tips:
+            if len(tips) >= 3:
+                break
+            if gt not in tips:
+                tips.append(gt)
+
     for tip in tips:
         st.markdown(f"- {tip}")
-
-    if r["found"]:
-        st.markdown("📈 Skill Coverage")
-        try:
-            import matplotlib.pyplot as plt
-            fig, ax = plt.subplots(figsize=(4, 4))
-            fig.patch.set_facecolor("#FAF8FF")
-            ax.set_facecolor("#F0EEFF")
-            ax.pie(
-                [len(r["found"]), len(r["missing"])],
-                labels=["Found", "Missing"],
-                colors=["#8B5CF6", "#C4B5FD"],
-                autopct="%1.0f%%",
-                textprops={"color": "#1E1245"},
-                startangle=90
-            )
-            ax.set_title("Skill Coverage", color="#1E1245", fontweight="bold")
-            st.pyplot(fig)
-        except ImportError:
-            st.info("pip install matplotlib for the chart")
 
     # ── Resume Templates ────────────────────────────────────
     st.markdown("<hr style='border-color:rgba(139,92,246,0.14)'>", unsafe_allow_html=True)

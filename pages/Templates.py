@@ -17,12 +17,16 @@ if not st.session_state.get("logged_in"):
     st.stop()
 
 # ── Header ─────────────────────────────────────────────────
-c1, c2 = st.columns([8, 2])
+c1, c2, c3 = st.columns([7, 1.5, 1.5])
 with c1:
     st.markdown("## 📄 Resume Templates")
     st.markdown("<p style='color:#6B7280'>Download a professional ATS-friendly template and fill it with your details.</p>",
                 unsafe_allow_html=True)
 with c2:
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("🏠 Dashboard", use_container_width=True):
+        st.switch_page("pages/Dashboard.py")
+with c3:
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("🚪 Logout", use_container_width=True):
         st.session_state.clear()
@@ -100,16 +104,17 @@ for i, t in enumerate(TEMPLATES):
         )
 
         st.markdown(f"""
-        <div style="background:#FAF8FF;border:2px solid {t['color']};border-radius:14px;
-                    padding:1.2rem 1.2rem 0.8rem;margin-bottom:1.2rem;">
-            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;">
-                <span style="font-size:2rem">{t['icon']}</span>
-                <div>
-                    <div style="color:#1E1245;font-weight:700;font-size:1.05rem;">{t['title']}</div>
-                    <div style="color:{t['color']};font-size:0.78rem;font-weight:600;">Best for: {t['best_for']}</div>
+        <div class="template-card" style="border-color:{t['color']};">
+            <div>
+                <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;">
+                    <span style="font-size:2rem">{t['icon']}</span>
+                    <div>
+                        <div style="color:#1E1245;font-weight:700;font-size:1.05rem;">{t['title']}</div>
+                        <div style="color:{t['color']};font-size:0.78rem;font-weight:600;">Best for: {t['best_for']}</div>
+                    </div>
                 </div>
+                <p style="color:#6B7280;font-size:0.87rem;margin:0.5rem 0 0.8rem;">{t['desc']}</p>
             </div>
-            <p style="color:#6B7280;font-size:0.87rem;margin:0.5rem 0 0.8rem;">{t['desc']}</p>
             <div style="margin-bottom:0.8rem;"><b style="color:#1E1245;font-size:0.82rem;">Sections included:</b><br>{sections_html}</div>
         </div>
         """, unsafe_allow_html=True)
@@ -117,7 +122,7 @@ for i, t in enumerate(TEMPLATES):
         if file_exists:
             with open(file_path, "rb") as f:
                 st.download_button(
-                    label=f"⬇️ Download {t['title']} Template",
+                    label="⬇️ Download Template",
                     data=f.read(),
                     file_name=f"resume_template_{t['title'].lower().replace(' ','_').replace('/','_')}.docx",
                     mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",

@@ -1,6 +1,8 @@
 import streamlit as st
 import io
 import os
+import re as _re
+from validators import is_valid_email, is_valid_phone, is_valid_url, is_valid_linkedin_url, is_valid_github_url
 
 
 def load_css():
@@ -259,28 +261,107 @@ st.markdown("<hr style='border-color:rgba(139,92,246,0.14)'>", unsafe_allow_html
 
 # ── Personal Details ───────────────────────────────────────
 st.markdown("### 👤 Personal Details")
-p1, p2 = st.columns(2)
-with p1:
-    name  = st.text_input("Full Name *",    value=st.session_state.get("user_name", ""))
-    email = st.text_input("Email *",        value=st.session_state.get("user_email", ""))
-with p2:
-    phone    = st.text_input("Phone Number", placeholder="+91 9000000000")
+
+row1 = st.columns(2)
+with row1[0]:
+    name = st.text_input("Full Name *", value=st.session_state.get("user_name", ""))
+    if name.strip() and any(ch.isdigit() for ch in name):
+        st.markdown(
+            "<p style='color:#DC2626;font-size:0.78rem;margin-top:-0.6rem;'>⚠️ Name should not contain numbers.</p>",
+            unsafe_allow_html=True
+        )
+with row1[1]:
+    phone = st.text_input("Phone Number", placeholder="9000000000", max_chars=10)
+    if phone.strip():
+        if not phone.strip().isdigit():
+            st.markdown(
+                "<p style='color:#DC2626;font-size:0.78rem;margin-top:-0.6rem;'>⚠️ Phone number can only contain digits (no letters).</p>",
+                unsafe_allow_html=True
+            )
+        elif len(phone.strip()) != 10:
+            st.markdown(
+                "<p style='color:#DC2626;font-size:0.78rem;margin-top:-0.6rem;'>⚠️ Phone number must be exactly 10 digits.</p>",
+                unsafe_allow_html=True
+            )
+
+row2 = st.columns(2)
+with row2[0]:
+    email = st.text_input("Email *", value=st.session_state.get("user_email", ""))
+    if email.strip() and not is_valid_email(email.strip()):
+        st.markdown(
+            "<p style='color:#DC2626;font-size:0.78rem;margin-top:-0.6rem;'>⚠️ Please enter a valid email address.</p>",
+            unsafe_allow_html=True
+        )
+with row2[1]:
     linkedin = st.text_input("LinkedIn URL", placeholder="linkedin.com/in/yourname")
+    if linkedin.strip() and not is_valid_linkedin_url(linkedin.strip()):
+        st.markdown(
+            "<p style='color:#DC2626;font-size:0.78rem;margin-top:-0.6rem;'>⚠️ Please enter a valid LinkedIn URL (e.g. linkedin.com/in/yourname).</p>",
+            unsafe_allow_html=True
+        )
+
 github = st.text_input("GitHub URL (optional)", placeholder="github.com/yourname")
+if github.strip() and not is_valid_github_url(github.strip()):
+    st.markdown(
+        "<p style='color:#DC2626;font-size:0.78rem;margin-top:-0.6rem;'>⚠️ Please enter a valid GitHub URL (e.g. github.com/yourname).</p>",
+        unsafe_allow_html=True
+    )
 
 st.markdown("<hr style='border-color:rgba(139,92,246,0.14)'>", unsafe_allow_html=True)
 
 # ── Professional Details ───────────────────────────────────
 st.markdown("### 💼 Professional Details")
+
+DEPARTMENT_OPTIONS = [
+    "Select Department", "Computer Science", "Information Technology",
+    "Electronics & Communication", "Mechanical Engineering", "Civil Engineering",
+    "Electrical Engineering", "Business Administration", "Commerce",
+    "Arts & Humanities", "Other"
+]
+EXPERIENCE_OPTIONS = [
+    "Select Experience", "Fresher (0 years)", "0–1 years",
+    "1–2 years", "2–5 years", "5–10 years", "10+ years"
+]
+OCCUPATION_OPTIONS = [
+    "Select Occupation", "Student", "Recent Graduate", "Software Developer",
+    "Data Analyst", "Data Scientist", "Web Developer", "DevOps Engineer",
+    "Business Analyst", "HR Professional", "Project Manager", "Other"
+]
+
+
+def _preselect(options, saved_value):
+    """Index of the account's saved value in the dropdown, or 0 (the
+    'Select ...' placeholder) if it isn't one of the listed options."""
+    return options.index(saved_value) if saved_value in options else 0
+
+
 pr1, pr2 = st.columns(2)
 with pr1:
-    occupation = st.text_input("Current Occupation *", value=st.session_state.get("user_occupation", ""))
-    experience = st.text_input("Experience Level *",   value=st.session_state.get("user_experience", ""))
+    department = st.selectbox(
+        "Department *", DEPARTMENT_OPTIONS,
+        index=_preselect(DEPARTMENT_OPTIONS, st.session_state.get("user_department", ""))
+    )
 with pr2:
-    department = st.text_input("Department / Field *", value=st.session_state.get("user_department", ""))
+    experience = st.selectbox(
+        "Experience Level *", EXPERIENCE_OPTIONS,
+        index=_preselect(EXPERIENCE_OPTIONS, st.session_state.get("user_experience", ""))
+    )
+
+occupation = st.selectbox(
+    "Current Occupation *", OCCUPATION_OPTIONS,
+    index=_preselect(OCCUPATION_OPTIONS, st.session_state.get("user_occupation", ""))
+)
+
 summary = st.text_area("Professional Summary *",
                         placeholder="Write 2-3 sentences about yourself and your career goal.",
                         height=100)
+
+_summary_sentences = [s for s in _re.split(r"[.!?]+", summary.strip()) if s.strip()]
+if summary.strip() and len(_summary_sentences) < 2:
+    st.markdown(
+        "<p style='color:#DC2626;font-size:0.78rem;margin-top:-0.6rem;'>⚠️ Please write more than one sentence about yourself.</p>",
+        unsafe_allow_html=True
+    )
 
 st.markdown("<hr style='border-color:rgba(139,92,246,0.14)'>", unsafe_allow_html=True)
 
@@ -290,13 +371,38 @@ education = []
 for idx in range(2):
     label = "Primary" if idx == 0 else "Secondary (optional)"
     with st.expander(f"📚 {label} Education", expanded=(idx == 0)):
-        e1, e2 = st.columns(2)
-        with e1:
-            degree  = st.text_input("Degree / Course",      placeholder="B.Tech Computer Science", key=f"deg_{idx}")
-            college = st.text_input("College / University",  placeholder="Your University",          key=f"col_{idx}")
-        with e2:
-            year  = st.text_input("Year",        placeholder="2021 – 2025", key=f"yr_{idx}")
-            grade = st.text_input("Grade / CGPA",placeholder="8.5 / 10",   key=f"gr_{idx}")
+        row_a = st.columns(2)
+        with row_a[0]:
+            degree = st.text_input("Degree / Course", placeholder="B.Tech Computer Science", key=f"deg_{idx}")
+            if degree.strip() and any(ch.isdigit() for ch in degree):
+                st.markdown(
+                    "<p style='color:#DC2626;font-size:0.78rem;margin-top:-0.6rem;'>⚠️ Degree should contain letters only, no numbers.</p>",
+                    unsafe_allow_html=True
+                )
+        with row_a[1]:
+            year = st.text_input("Year", placeholder="2020 - 2025", key=f"yr_{idx}")
+            if year.strip() and not _re.match(r"^\d{4}\s*-\s*\d{4}$", year.strip()):
+                st.markdown(
+                    "<p style='color:#DC2626;font-size:0.78rem;margin-top:-0.6rem;'>⚠️ Use the format 2020 - 2025.</p>",
+                    unsafe_allow_html=True
+                )
+
+        row_b = st.columns(2)
+        with row_b[0]:
+            college = st.text_input("College / University", placeholder="Your University", key=f"col_{idx}")
+            if college.strip() and any(ch.isdigit() for ch in college):
+                st.markdown(
+                    "<p style='color:#DC2626;font-size:0.78rem;margin-top:-0.6rem;'>⚠️ College name should contain letters only, no numbers.</p>",
+                    unsafe_allow_html=True
+                )
+        with row_b[1]:
+            grade = st.text_input("Grade / CGPA", placeholder="8.5 / 10", key=f"gr_{idx}")
+            if grade.strip() and any(ch.isalpha() for ch in grade):
+                st.markdown(
+                    "<p style='color:#DC2626;font-size:0.78rem;margin-top:-0.6rem;'>⚠️ Grade/CGPA should contain numbers only.</p>",
+                    unsafe_allow_html=True
+                )
+
         education.append({"degree": degree, "college": college, "year": year, "grade": grade})
 
 st.markdown("<hr style='border-color:rgba(139,92,246,0.14)'>", unsafe_allow_html=True)
@@ -323,6 +429,12 @@ for idx in range(3):
         proj_desc = st.text_area("Description",
                                   placeholder="Built a web app using Python and Streamlit\nImplemented ML model for job prediction",
                                   height=80, key=f"pdesc_{idx}")
+        _desc_lines = [ln for ln in proj_desc.split("\n") if ln.strip()]
+        if proj_desc.strip() and len(_desc_lines) < 2:
+            st.markdown(
+                "<p style='color:#DC2626;font-size:0.78rem;margin-top:-0.6rem;'>⚠️ Add more than one line (one point per line).</p>",
+                unsafe_allow_html=True
+            )
         proj_tech = st.text_input("Tech Stack",   placeholder="Python, Streamlit, SQLite", key=f"ptech_{idx}")
         projects.append({"name": proj_name, "description": proj_desc, "tech": proj_tech})
 
@@ -342,12 +454,41 @@ st.markdown("### ⚡ Generate Resume")
 if st.button("🛠️ Generate My Resume", use_container_width=True, type="primary"):
     errors = []
     if not name.strip():            errors.append("Full Name is required.")
-    if not email.strip():           errors.append("Email is required.")
-    if not occupation.strip():      errors.append("Occupation is required.")
-    if not department.strip():      errors.append("Department is required.")
+    elif any(ch.isdigit() for ch in name):
+        errors.append("Name should not contain numbers.")
+    if not email.strip():
+        errors.append("Email is required.")
+    elif not is_valid_email(email.strip()):
+        errors.append("Please enter a valid email address (e.g. you@example.com).")
+    if phone.strip():
+        if not phone.strip().isdigit():
+            errors.append("Phone number can only contain digits.")
+        elif len(phone.strip()) != 10:
+            errors.append("Phone number must be exactly 10 digits.")
+    if linkedin.strip() and not is_valid_linkedin_url(linkedin.strip()):
+        errors.append("Please enter a valid LinkedIn URL (e.g. linkedin.com/in/yourname).")
+    if github.strip() and not is_valid_github_url(github.strip()):
+        errors.append("Please enter a valid GitHub URL (e.g. github.com/yourname).")
+    if occupation == "Select Occupation":  errors.append("Please select your current occupation.")
+    if department == "Select Department":  errors.append("Please select your department.")
+    if experience == "Select Experience":  errors.append("Please select your experience level.")
     if not summary.strip():         errors.append("Professional Summary is required.")
+    elif len(_summary_sentences) < 2:
+        errors.append("Professional Summary should have more than one sentence.")
     if not skills.strip():          errors.append("Technical Skills are required.")
+    for e in education:
+        if e["degree"].strip() and any(ch.isdigit() for ch in e["degree"]):
+            errors.append("Degree should contain letters only, no numbers.")
+        if e["college"].strip() and any(ch.isdigit() for ch in e["college"]):
+            errors.append("College name should contain letters only, no numbers.")
+        if e["year"].strip() and not _re.match(r"^\d{4}\s*-\s*\d{4}$", e["year"].strip()):
+            errors.append("Education Year should be in the format 2020 - 2025.")
+        if e["grade"].strip() and any(ch.isalpha() for ch in e["grade"]):
+            errors.append("Education Grade/CGPA should contain numbers only.")
+
     if not projects[0]["name"].strip(): errors.append("At least 1 Project is required.")
+    elif len([ln for ln in projects[0]["description"].split("\n") if ln.strip()]) < 2:
+        errors.append("Project 1 Description should have more than one line.")
 
     if errors:
         for e in errors:

@@ -2,6 +2,7 @@ import streamlit as st
 import csv
 import io
 from database import login_admin, get_all_users
+from validators import is_valid_email
 
 
 def load_css():
@@ -10,6 +11,20 @@ def load_css():
 
 
 load_css()
+
+st.markdown("""
+<style>
+input:invalid {
+    box-shadow: none !important;
+    outline: none !important;
+}
+[data-testid="stTextInput"] input:invalid,
+[data-testid="stTextInput"] input:focus:invalid {
+    border-color: inherit !important;
+    box-shadow: none !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
 
 def show_login():
@@ -27,18 +42,23 @@ def show_login():
         """, unsafe_allow_html=True)
 
         with st.form("admin_login"):
-            email    = st.text_input("📧 Admin Email", placeholder="example@google.com")
-            password = st.text_input("🔒 Password", type="password")
+            email    = st.text_input("📧 Admin Email", placeholder="example@google.com", autocomplete="off")
+            password = st.text_input("🔒 Password", type="password", autocomplete="off")
             submitted = st.form_submit_button("Access Admin Panel →", use_container_width=True)
 
     if submitted:
-        admin = login_admin(email.strip().lower(), password)
-        if admin:
-            st.session_state.admin_logged_in = True
-            st.session_state.admin_email     = email.strip().lower()
-            st.rerun()
+        if not email or not password:
+            st.error("Please fill in all fields.")
+        elif not is_valid_email(email.strip()):
+            st.error("Please enter a valid email address.")
         else:
-            st.error("Invalid admin credentials.")
+            admin = login_admin(email.strip().lower(), password)
+            if admin:
+                st.session_state.admin_logged_in = True
+                st.session_state.admin_email     = email.strip().lower()
+                st.rerun()
+            else:
+                st.error("Invalid admin credentials.")
 
 
 def export_users_csv(users):

@@ -1,5 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
+/* ── Hide Streamlit's built-in "Press Enter to submit form" / "Press Enter
+   to apply" hint. This is native Streamlit UI (shown automatically on any
+   text_input/number_input that sits inside st.form()), not a bug — but it
+   clutters the layout, so we hide it. Streamlit doesn't keep this test id
+   perfectly stable across versions, so several fallback selectors are used. */
+[data-testid="InputInstructions"],
+[data-testid="stWidgetInstructions"],
+[class*="InputInstructions"] {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    opacity: 0 !important;
+}
+
+
 :root {
     --bg:      #F0EEFF;
     --surface: #FAF8FF;
@@ -92,21 +108,118 @@ div[data-testid="stDownloadButton"] > button:hover {
     transform: translateY(-1px) !important;
     box-shadow: 0 6px 20px rgba(139,92,246,0.35) !important;
 }
-/* Password visibility button */
-
-div[data-testid="stTextInput"] button {
-    background: #8B5CF6 !important;
-    color: white !important;
+/* Text inputs (Full Name, Email, Password, Confirm Password) — one seamless box.
+   SIMPLER APPROACH: rather than forcing height:100%/flex:1 down through several
+   nested BaseWeb divs (fragile — if any link in that chain doesn't cooperate,
+   the <input> collapses to its own natural size and renders as a small
+   detached rectangle inside the bigger box), we let the outer container size
+   itself around the input using padding, and the input just fills 100% width
+   with no border of its own. */
+div[data-testid="stTextInput"] > div {
+    background: #FAF8FF !important;
+    border: 1px solid rgba(139,92,246,0.22) !important;
+    border-radius: 8px !important;
+    padding: 0 !important;
+    transition: border-color 0.2s ease !important;
+}
+div[data-testid="stTextInput"] > div:focus-within {
+    border-color: #8B5CF6 !important;
+    box-shadow: 0 0 0 3px rgba(139,92,246,0.12) !important;
+}
+/* Every nested div Streamlit/BaseWeb inserts becomes fully transparent and
+   inert — no background, no border, no fixed sizing of its own. */
+div[data-testid="stTextInput"] > div div {
+    background: transparent !important;
     border: none !important;
-    border-radius: 6px !important;
+    box-shadow: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+}
+div[data-testid="stTextInput"] input {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    padding: 0.5rem 0.75rem !important;
+    color: #1E1245 !important;
+    caret-color: #1E1245 !important;
+    font-family: 'Inter', sans-serif !important;
+}
+/* Only style the real "show password" toggle button (password fields).
+   Scoping with :has() prevents this from also matching the hidden
+   clear-text (X) button that Streamlit renders inside EVERY text_input,
+   which is what was showing up as a second solid box on plain fields
+   like Email. */
+div[data-testid="stTextInput"]:has(input[type="password"]) button {
+    background: transparent !important;
+    color: #8B5CF6 !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin-right: 0.5rem !important;
+}
+div[data-testid="stTextInput"]:has(input[type="password"]) button:hover {
+    color: #7C3AED !important;
+}
+div[data-testid="stTextInput"]:has(input[type="password"]) button svg {
+    fill: #8B5CF6 !important;
 }
 
-div[data-testid="stTextInput"] button:hover {
-    background: #7C3AED !important;
+/* Any non-password button (e.g. the built-in clear/"X" button) stays
+   invisible and out of the layout entirely. */
+div[data-testid="stTextInput"]:not(:has(input[type="password"])) button {
+    display: none !important;
 }
 
-div[data-testid="stTextInput"] button svg {
-    fill: white !important;
+/* Number input ("Age" field) — same simplified approach as text inputs above */
+div[data-testid="stNumberInput"] {
+    background: transparent !important;
+    border: none !important;
+}
+div[data-testid="stNumberInput"] > div {
+    background: #FAF8FF !important;
+    border: 1px solid rgba(139,92,246,0.22) !important;
+    border-radius: 8px !important;
+    padding: 0 !important;
+    transition: border-color 0.2s ease !important;
+}
+div[data-testid="stNumberInput"] > div:focus-within {
+    border-color: #8B5CF6 !important;
+    box-shadow: 0 0 0 3px rgba(139,92,246,0.12) !important;
+}
+div[data-testid="stNumberInput"] > div div {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+}
+div[data-testid="stNumberInput"] input {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    padding: 0.5rem 0.75rem !important;
+    color: #1E1245 !important;
+    font-family: 'Inter', sans-serif !important;
+}
+div[data-testid="stNumberInput"] button,
+button[data-testid="stNumberInputStepUp"],
+button[data-testid="stNumberInputStepDown"] {
+    background: transparent !important;
+    color: #8B5CF6 !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 0.35rem !important;
+}
+div[data-testid="stNumberInput"] button:hover,
+button[data-testid="stNumberInputStepUp"]:hover,
+button[data-testid="stNumberInputStepDown"]:hover {
+    color: #7C3AED !important;
+}
+div[data-testid="stNumberInput"] button svg,
+button[data-testid="stNumberInputStepUp"] svg,
+button[data-testid="stNumberInputStepDown"] svg {
+    fill: #8B5CF6 !important;
 }
 /* Force text visibility */
 div[data-testid="stDownloadButton"] > button p,
@@ -114,23 +227,310 @@ div[data-testid="stDownloadButton"] > button span {
     color: white !important;
 }
 
-/* ── Inputs ── */
-div[data-testid="stTextInput"] input,
-div[data-testid="stNumberInput"] input,
-div[data-testid="stTextArea"] textarea,
+/* ── Inputs (textarea / selectbox only — text & number inputs handled above) ──
+   Border lives on the WRAPPER div (data-baseweb="base-input"), same
+   technique used for text inputs above — not on the <textarea> itself.
+   Streamlit's own wrapper carries its own default border, so putting a
+   border on the textarea too was stacking two borders (a "double line"
+   look). Only one layer gets a border now, matching every other field. */
+/* stTextAreaRootElement itself carries data-baseweb="textarea" (no separate
+   nested "base-input" wrapper like the text inputs get) — and Streamlit's
+   own atomic classes (e.g. ".st-bu") set a dark theme background directly
+   on THIS element. Since the <textarea> inside doesn't cover its own
+   padding, that dark background peeks through as a "border". Fix: style
+   the root element directly, and force every descendant div transparent
+   so nothing but this one background/border layer is ever visible. */
+div[data-testid="stTextAreaRootElement"] {
+    background: #FAF8FF !important;
+    border: 1px solid rgba(139,92,246,0.22) !important;
+    border-radius: 8px !important;
+    transition: border-color 0.2s ease !important;
+}
+div[data-testid="stTextAreaRootElement"]:focus-within {
+    border-color: #8B5CF6 !important;
+    box-shadow: 0 0 0 3px rgba(139,92,246,0.12) !important;
+}
+div[data-testid="stTextAreaRootElement"] div {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+div[data-testid="stTextArea"] textarea {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 0.75rem !important;
+    color: #1E1245 !important;
+    caret-color: #1E1245 !important;
+    font-family: 'Inter', sans-serif !important;
+}
+div[data-testid="stTextArea"] textarea:focus {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Kill native browser "invalid" red outline/glow on textareas — same fix
+   Login/Register already apply to text inputs. Without this, the browser's
+   default invalid-state ring shows through even after our border:none. */
+textarea:invalid {
+    box-shadow: none !important;
+    outline: none !important;
+}
+div[data-testid="stTextArea"] textarea:invalid,
+div[data-testid="stTextArea"] textarea:focus:invalid {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+div[data-testid="stSelectbox"] > div {
+    background: #FAF8FF !important;
+    border-radius: 8px !important;
+}
 div[data-testid="stSelectbox"] > div > div {
     background: #FAF8FF !important;
     border: 1px solid rgba(139,92,246,0.22) !important;
     border-radius: 8px !important;
+    padding: 0.1rem 0.25rem !important;
     color: #1E1245 !important;
     font-family: 'Inter', sans-serif !important;
     transition: border-color 0.2s ease !important;
+    box-shadow: none !important;
 }
-div[data-testid="stTextInput"] input:focus,
-div[data-testid="stTextArea"] textarea:focus {
+div[data-testid="stSelectbox"] > div > div:focus-within {
     border-color: #8B5CF6 !important;
     box-shadow: 0 0 0 3px rgba(139,92,246,0.12) !important;
-    outline: none !important;
+}
+
+/* ── Selectbox dropdown popover (the open options list) ──
+   Streamlit renders this in a portal outside the form, and it still
+   carries the dark theme's default colors (black background, white
+   text) since nothing here had touched it before — only the CLOSED
+   field was themed above. Re-theme the open list to match everything
+   else: light background, purple border, and a purple highlight for
+   hover/selected instead of the dark default. */
+div[data-baseweb="popover"] ul[data-baseweb="menu"] {
+    background: #FAF8FF !important;
+    border: 1px solid rgba(139,92,246,0.22) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 24px rgba(139,92,246,0.18) !important;
+}
+div[data-baseweb="popover"] li[data-baseweb="menu-item"] {
+    background: transparent !important;
+    color: #1E1245 !important;
+    font-family: 'Inter', sans-serif !important;
+}
+div[data-baseweb="popover"] li[data-baseweb="menu-item"]:hover,
+div[data-baseweb="popover"] li[aria-selected="true"] {
+    background: rgba(139,92,246,0.14) !important;
+    color: #1E1245 !important;
+}
+
+/* ── Inline field-error messages ──
+   Reserves the same vertical space whether a message is showing or not
+   (via min-height + the "&nbsp;" placeholder from field_error()), so a
+   validation message appearing/disappearing never shifts the layout of
+   the form around it. */
+.field-error {
+    min-height: 1.15rem;
+    font-size: 0.78rem;
+    line-height: 1.15rem;
+    color: #EF4444;
+    margin: 2px 0 0.4rem 2px;
+    font-family: 'Inter', sans-serif;
+}
+
+
+/* ── Kill native browser input decorations ──
+   Edge draws its own "clear field" (X) and "reveal password" (eye) icons
+   INSIDE the input on focus/typing — these are native browser chrome, not
+   part of the page DOM, so no amount of styling the Streamlit button fixes
+   them. Chrome/Safari do something similar for autofill (a little key icon)
+   on email/password fields. This is almost always the real cause of a
+   "second box" that only appears once you click into the field. */
+input::-ms-clear,
+input::-ms-reveal {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+input::-webkit-textfield-decoration-container {
+    display: none !important;
+}
+input::-webkit-credentials-auto-fill-button,
+input::-webkit-caps-lock-indicator {
+    visibility: hidden !important;
+    display: none !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    right: 0 !important;
+}
+input::-webkit-clear-button,
+input::-webkit-search-cancel-button,
+input::-webkit-search-decoration {
+    display: none !important;
+    -webkit-appearance: none !important;
+}
+
+/* ── Kill browser autofill gray/yellow background ──
+   Chrome/Edge/Safari paint their own background color behind autofilled
+   inputs (e.g. the saved email), which overrides our CSS background and is
+   what causes the input to look flat gray instead of lavender. The trick is
+   a huge inset box-shadow in our surface color — box-shadow isn't blocked
+   by the browser the way background-color is, and -webkit-text-fill-color
+   is needed because autofill also forces its own text color. */
+div[data-testid="stTextInput"] input:-webkit-autofill,
+div[data-testid="stTextInput"] input:-webkit-autofill:hover,
+div[data-testid="stTextInput"] input:-webkit-autofill:focus,
+div[data-testid="stTextInput"] input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #FAF8FF inset !important;
+    box-shadow: 0 0 0 1000px #FAF8FF inset !important;
+    -webkit-text-fill-color: #1E1245 !important;
+    caret-color: #1E1245 !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* ── Expander (Education / experience blocks) ──
+   No rule existed for this before, so Streamlit's default dark theme
+   header rendered — a near-black bar with low-contrast text. Restyle
+   header + body to match the lavender surface used everywhere else. */
+[data-testid="stExpander"] {
+    background: #FAF8FF !important;
+    border: 1px solid rgba(139,92,246,0.22) !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    margin-bottom: 0.75rem !important;
+}
+[data-testid="stExpander"] summary,
+[data-testid="stExpander"] > details > summary {
+    background: #EDE9FF !important;
+    color: #4C1D95 !important;
+    font-weight: 600 !important;
+    font-family: 'Inter', sans-serif !important;
+}
+[data-testid="stExpander"] summary:hover {
+    background: rgba(139,92,246,0.16) !important;
+}
+[data-testid="stExpander"] summary p {
+    color: #4C1D95 !important;
+    font-weight: 600 !important;
+}
+[data-testid="stExpander"] summary svg {
+    fill: #8B5CF6 !important;
+}
+[data-testid="stExpander"] [data-testid="stExpanderDetails"] {
+    background: #FAF8FF !important;
+    color: #1E1245 !important;
+}
+
+/* ── Skill coverage card ──
+   Generator/Dashboard build this markup with classes (coverage-card,
+   coverage-row, coverage-track, coverage-fill, coverage-dot, etc.) that
+   had no matching CSS anywhere — so it rendered as bare unstyled text
+   with no card, no bars, no dots, no consistent number formatting. */
+.coverage-card {
+    background: #FAF8FF;
+    border: 1px solid rgba(139,92,246,0.18);
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+}
+.coverage-row { margin-bottom: 1rem; }
+.coverage-row:last-child { margin-bottom: 0; }
+.coverage-row-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.4rem;
+    font-family: 'Inter', sans-serif;
+}
+.coverage-row-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #1E1245;
+    font-weight: 600;
+    font-size: 0.88rem;
+}
+.coverage-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+.coverage-row-value {
+    color: #7C3AED;
+    font-weight: 700;
+    font-size: 0.88rem;
+    font-variant-numeric: tabular-nums;
+}
+.coverage-track {
+    width: 100%;
+    height: 8px;
+    background: rgba(139,92,246,0.12);
+    border-radius: 100px;
+    overflow: hidden;
+}
+.coverage-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 0.3s ease;
+}
+
+/* ── Template cards (Templates.py) equal-height fix ──
+   Each card's height previously came only from its own text content, so a
+   card with a shorter description (e.g. "General / ATS Friendly") rendered
+   visibly smaller than its row partner. Making the column a flex column
+   and the card flex:1 lets both cards in a row stretch to match whichever
+   is naturally taller. */
+div[data-testid="stColumn"] {
+    display: flex !important;
+    flex-direction: column !important;
+}
+div[data-testid="stColumn"] > div {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.template-card {
+    background: #FAF8FF;
+    border: 2px solid;
+    border-radius: 14px;
+    padding: 1.2rem 1.2rem 0.8rem;
+    margin-bottom: 1.2rem;
+    min-height: 300px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* ── Download buttons (Templates.py) — force single line ──
+   Guarantees all four "Download ... Template" buttons look identical
+   (one line, same size) regardless of label length, so this doesn't
+   depend on the button text itself being edited/shortened correctly. */
+[data-testid="stDownloadButton"] button {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-size: 0.92rem !important;
+}
+[data-testid="stDownloadButton"] button p {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* ── Inline field hints/errors (Generator.py Personal Details) ──
+   Pulls the small hint/error caption up snug against its input box via
+   negative margin, then restores normal spacing before the next input,
+   so the two-column grid layout doesn't shift or gain extra gaps. */
+div[data-testid="stTextInput"] + div[data-testid="stMarkdownContainer"] p {
+    margin-top: -0.6rem;
+    margin-bottom: 0.6rem;
 }
 
 /* ── Labels ── */
@@ -152,14 +552,93 @@ label {
 [data-testid="stMetricValue"] { color: #7C3AED !important; font-weight: 700 !important; }
 [data-testid="stMetricLabel"] { color: #6B7280 !important; font-size: 0.8rem !important; }
 
-/* ── File uploader ── */
+/* ── File uploader ──
+   The outer stFileUploader wrapper is styled here, but Streamlit renders
+   the actual drop-zone and its "Browse files" button as separate inner
+   elements that inherit the base dark theme unless targeted directly —
+   that's what causes the near-black box with a low-contrast button. */
 [data-testid="stFileUploader"] {
+    background: transparent !important;
+    border: none !important;
+    color: #1E1245 !important;
+}
+[data-testid="stFileUploaderDropzone"],
+[data-testid="stFileUploader"] section {
     background: #FAF8FF !important;
     border: 1.5px dashed rgba(139,92,246,0.35) !important;
     border-radius: 12px !important;
     color: #1E1245 !important;
 }
-[data-testid="stFileUploader"]:hover { border-color: #8B5CF6 !important; }
+[data-testid="stFileUploaderDropzone"]:hover,
+[data-testid="stFileUploader"] section:hover {
+    border-color: #8B5CF6 !important;
+}
+[data-testid="stFileUploaderDropzone"] span,
+[data-testid="stFileUploaderDropzone"] small,
+[data-testid="stFileUploader"] section span,
+[data-testid="stFileUploader"] section small {
+    color: #4C1D95 !important;
+}
+[data-testid="stFileUploaderDropzone"] svg,
+[data-testid="stFileUploader"] section svg {
+    fill: #8B5CF6 !important;
+}
+/* The "Browse files" button inside the dropzone */
+[data-testid="stFileUploaderDropzone"] button,
+[data-testid="stFileUploader"] section button,
+[data-testid="stBaseButton-secondary"] {
+    background: #EDE9FF !important;
+    color: #4C1D95 !important;
+    border: 1px solid rgba(139,92,246,0.35) !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-family: 'Inter', sans-serif !important;
+}
+[data-testid="stFileUploaderDropzone"] button:hover,
+[data-testid="stFileUploader"] section button:hover,
+[data-testid="stBaseButton-secondary"]:hover {
+    background: rgba(139,92,246,0.18) !important;
+    border-color: #8B5CF6 !important;
+}
+[data-testid="stFileUploaderDropzone"] button p,
+[data-testid="stFileUploader"] section button p,
+[data-testid="stBaseButton-secondary"] p {
+    color: #4C1D95 !important;
+}
+/* Uploaded file chip — confirmed via DevTools to use stFileChip /
+   stFileChipName / stFileChipDeleteBtn (not stFileUploaderFile, which
+   doesn't exist in this Streamlit version — that's why prior attempts
+   never matched anything). */
+[data-testid="stFileChip"] {
+    background: #FAF8FF !important;
+    background-color: #FAF8FF !important;
+    border: 1px solid rgba(139,92,246,0.22) !important;
+    border-radius: 10px !important;
+    padding: 0.4rem 0.6rem !important;
+}
+[data-testid="stFileChip"] * {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+[data-testid="stFileChipName"] {
+    color: #1E1245 !important;
+}
+[data-testid="stFileChip"] small {
+    color: #6B7280 !important;
+}
+[data-testid="stFileChip"] svg {
+    fill: #8B5CF6 !important;
+}
+[data-testid="stFileChipDeleteBtn"] {
+    background: rgba(139,92,246,0.14) !important;
+    border-radius: 50% !important;
+}
+[data-testid="stFileChipDeleteBtn"]:hover {
+    background: rgba(139,92,246,0.28) !important;
+}
+[data-testid="stFileChipDeleteBtn"] svg {
+    fill: #8B5CF6 !important;
+}
 
 /* ── Progress bar ── */
 [data-testid="stProgressBar"] > div > div {
